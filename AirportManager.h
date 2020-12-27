@@ -4,8 +4,8 @@
 
 typedef struct
 {
-	LIST	airportList;
-	NODE*	pNode;
+	NODE*	airportList;
+	NODE	head;
 	int			count;
 }AirportManager;
 
@@ -14,5 +14,5 @@ int		addAirport(AirportManager* pManager);
 void	setAirport(Airport* pPort, AirportManager* pManager);
 Airport* findAirportByCode(const AirportManager* pManager, const char* code);
 int		checkUniqeCode(const char* code, const AirportManager* pManager);
-void	printAirports(const void* p);
+void	printAirports(const AirportManager* p);
 void	freeManager(void* p);

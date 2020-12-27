@@ -1,104 +1,116 @@
-/**************/
-/*   list.c   */
-/**************/
-
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "listGen.h"
 
 
-//////////////////////////////////////////
-// Init
-// Aim:		create new list
-// Input:	pointer to the list structure
-// Output:	TRUE if succeeded
-//////////////////////////////////////////
-BOOL L_init(LIST* pList)
+NODE* L_init()
 {
-	if (pList == NULL) return False;	// no list to initialize
-
-	pList->head.next = NULL;
-	return True;
+	NODE* head = (NODE*)malloc(sizeof(NODE));
+	if (!head)
+		return NULL;
+	head->data = NULL;
+	head->next = NULL;
+	return head;
 }
 
 
-/////////////////////////////////////////////////////////////////
-// Insert
-// Aim:		add new node
-// Input:	pointer to the node BEFORE the place for the new one
-//			a value to be stored in the new node
-// Output:	pointer to the new node
-/////////////////////////////////////////////////////////////////
-NODE* L_insert(NODE* pNode, DATA Value)
+void L_insert(NODE** head, void* Value, int(*compare)(void*, void*))
 {
-	NODE* tmp;
+	NODE *newNode = (NODE*)malloc(sizeof(NODE));
+	if (!newNode)
+		return;
 
-	if (!pNode) return NULL;
+	newNode->data = Value;
 
-	tmp = (NODE*)malloc(sizeof(NODE));	// new node
+	if (compare)
+		L_insertSorted(head, newNode, compare);
+	else
+		L_insertByDefault(head, newNode);
+}
 
-	if (tmp != NULL) {
-		tmp->key = Value;
-		tmp->next = pNode->next;
-		pNode->next = tmp;
+void L_insertSorted(NODE** head, NODE* newNode, int(*compare)(void*, void*))
+{
+	NODE* temp;
+	if (!(*head)->data || compare(newNode->data, (*head)->data))
+	{
+		newNode->next = (*head);
+		(*head) = newNode;
 	}
-	return tmp;
+	else
+	{
+		temp = (*head);
+		while (temp->next && compare(newNode->data, temp->data) == 1)
+		{
+			temp = temp->next;
+		}
+		newNode->next = temp->next;
+		temp->next = newNode;
+	}
+}
+
+void L_insertByDefault(NODE** head, NODE* newNode)
+{
+	NODE* temp;
+	if (!(*head))
+	{
+		newNode->next = (*head);
+		(*head) = newNode;
+	}
+	else
+	{
+		temp = (*head);
+		while (temp->next)
+		{
+			temp = temp->next;
+		}
+		newNode->next = temp->next;
+		temp->next = newNode;
+	}
+
 }
 
 
-//////////////////////////////////////////////////////////////
-// Delete
-// Aim:		erase node
-// Input:	pointer to the node BEFORE the node to be deleted 
-// Output:	TRUE if succeeded
-//////////////////////////////////////////////////////////////
-BOOL L_delete(NODE* pNode, void(*freeFunc)(void*))
+
+void L_delete(NODE* head, void(*freeFunc)(void*))
 {
 	NODE* tmp;
 
-	if (!pNode || !(tmp = pNode->next)) return False;
+	if (!head || !(tmp = head->next)) return;
 
-	pNode->next = tmp->next;
+	head->next = tmp->next;
 	if (freeFunc != NULL)
-		freeFunc(tmp->key);
+		freeFunc(tmp->data);
 	free(tmp);
-	return True;
-}
-
-////////////////////////////////////////////////
-// Free (additional function)
-// Aim:		free the list memory
-// Input:	pointer to the list structure
-// Output:	TRUE if succeeded
-////////////////////////////////////////////////
-BOOL L_free(LIST* pList, void(*freeFunc)(void*))
-{
-	NODE *tmp;
-
-	if (!pList) return False;
-
-	for (tmp = &(pList->head); L_delete(tmp, freeFunc); );
-	return True;
 }
 
 
-////////////////////////////////////////////////
-// Print (additional function)
-// Aim:		print the list content (assume the DATA is int)
-// Input:	pointer to the list structure
-// Output:	a number of the printed elements
-////////////////////////////////////////////////
-int L_print(LIST* pList, void(*print)(const void*))
+void L_free(NODE* head, void(*freeFunc)(void*))
 {
-	NODE	*tmp;
-	int		c = 0;
+	NODE *tmp = NULL;
+	NODE *pNode = head;
 
-	if (!pList) return 0;
+	if (!pNode) return;
 
+	while (pNode)
+	{
+		tmp = pNode;
+		pNode = pNode->next;
+		L_delete(tmp, freeFunc);
+	}
+}
+
+
+void L_print(NODE* head, void(*print)(const void*))
+{
+	if (!head)
+		return;
+
+	NODE* temp = head;
+	while (temp) {
+		if (temp->data)
+			print(temp->data);
+		temp = temp->next;
+	}
 	printf("\n");
-	for (tmp = pList->head.next; tmp; tmp = tmp->next, c++)
-		print(tmp->key);
-	printf("\n");
-	return c;
 }

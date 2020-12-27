@@ -59,9 +59,6 @@
     <ClInclude Include="General.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="def.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="listGen.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -9,7 +9,9 @@ int	initManager(AirportManager* pManager)
 {
 	printf("-----------  Init airport Manager\n");
 	pManager->count = 0;
-	if (!L_init(&pManager->airportList))
+	pManager->airportList = L_init();
+	pManager->head = *pManager->airportList;
+	if (!pManager->airportList)
 		return 0;
 
 	int count = 0;
@@ -22,15 +24,10 @@ int	initManager(AirportManager* pManager)
 	scanf("%c", &tav);
 	if (count == 0)
 		return 1;
-	Airport* pA;
-	pManager->pNode = &pManager->airportList.head;
+
 	for (int i = 0; i < count; i++)
 	{
-		pA = (Airport*)malloc(sizeof(Airport));
-		if (!pA)
-			return 0;
-		setAirport(pA, pManager);
-		pManager->count++;
+		addAirport(pManager);
 	}
 
 	return 1;
@@ -43,6 +40,7 @@ int	addAirport(AirportManager* pManager)
 	if (!pA)
 		return 0;
 	setAirport(pA, pManager);
+	L_insert(&pManager->airportList, pA, isSameAirport);
 	pManager->count++;
 	return 1;
 }
@@ -59,16 +57,15 @@ void  setAirport(Airport* pPort, AirportManager* pManager)
 	}
 
 	initAirportNoCode(pPort);
-	pManager->pNode = L_insert(pManager->pNode, pPort);
 }
 
 Airport* findAirportByCode(const AirportManager* pManager, const char* code)
 {
-	NODE * temp = &pManager->airportList.head;
+	NODE * temp = pManager->airportList;
 	while (temp)
 	{
-		if (isAirportCode(temp->key, code))
-			return temp->key;
+		if (isAirportCode(temp->data, code))
+			return temp->data;
 		temp = temp->next;
 	}
 	return NULL;
@@ -84,11 +81,10 @@ int checkUniqeCode(const char* code, const AirportManager* pManager)
 	return 1;
 }
 
-void	printAirports(const void* p)
+void	printAirports(const AirportManager* p)
 {
-	const AirportManager* pManager = (const AirportManager*)p;
-	printf("there are %d airports\n", pManager->count);
-	printAirport(&pManager->airportList.head.key);
+	printf("there are %d airports\n", p->count);
+	L_print(p->airportList, printAirport);
 	printf("\n");
 }
 

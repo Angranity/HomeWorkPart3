@@ -1,31 +1,23 @@
 #pragma once
-#include "def.h"
 
-
-/*** Definitions ***/
-
-// Node
-typedef struct node
-{
-	DATA			key;
-	struct node*	next;
-}NODE;
-
-// List
-typedef struct
-{
-	NODE head;
-}LIST;
+typedef struct NODE {
+	void* data;
+	struct NODE* next;
+} NODE;
 
 
 /*** Function prototypes ***/
 
-BOOL L_init(LIST* pList);					// create new list
+NODE* L_init();					// create new list
 
-NODE* L_insert(NODE* pNode, DATA Value);	// add new node after *pNode
+void L_insert(NODE** head, void* Value, int(*compare)(void*, void*));	// add new node after *pNode
 
-BOOL L_delete(NODE* pNode, void(*freeFunc)(void*));					// erase node after *pNode
+void L_insertSorted(NODE** head, NODE* newNode, int(*compare)(void*, void*));
 
-BOOL L_free(LIST* pList, void(*freeFunc)(void*));					// free list memory
+void L_insertByDefault(NODE** head, NODE* newNode);
 
-int L_print(LIST* pList, void(*print)(const void*));					// print the list content
+void L_delete(NODE* head, void(*freeFunc)(void*));					// erase node after *pNode
+
+void L_free(NODE* head, void(*freeFunc)(void*));					// free list memory
+
+void L_print(NODE* head, void(*print)(const void*));					// print the list content

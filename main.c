@@ -50,7 +50,7 @@ int main()
 			break;
 
 		case ePrintAirports:
-			L_print(&manager.airportList, printAirports);
+			printAirports(&manager);
 			break;
 
 		case ePrintFlightOrigDest:
@@ -68,7 +68,7 @@ int main()
 		}
 	} while (!stop);
 
-	freeManager(&manager);
+	L_free(&manager.head, freeManager);
 	freeCompany(&company);
 	return 1;
 }
