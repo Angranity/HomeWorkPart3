@@ -23,8 +23,19 @@ int main()
 	AirportManager	manager;
 	Company			company;
 
-	initManager(&manager);
-	initCompany(&company);
+	if (!readFromTextFile(&manager))
+	{
+		printf("Error open airport manager file\n");
+		initManager(&manager);
+	}
+
+	if (!readFromBinaryFile(&company))
+	{
+		printf("Error open company file\n");
+		initCompany(&company);
+	}
+
+
 
 	int option;
 	int stop = 0;
@@ -68,6 +79,8 @@ int main()
 		}
 	} while (!stop);
 
+	saveToTextFile(&manager);
+	saveToBinaryFile(&company);
 	L_free(&manager.head, freeManager);
 	freeCompany(&company);
 	return 1;

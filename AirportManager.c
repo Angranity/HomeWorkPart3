@@ -17,7 +17,7 @@ int	initManager(AirportManager* pManager)
 	int count = 0;
 	do {
 		printf("How many airport?\t");
-		scanf("%d", &count); 
+		scanf("%d", &count);
 	} while (count < 0);
 	//clean buffer
 	char tav;
@@ -40,7 +40,7 @@ int	addAirport(AirportManager* pManager)
 	if (!pA)
 		return 0;
 	setAirport(pA, pManager);
-	L_insert(&pManager->airportList, pA, compareByABC);
+	L_insert(&(pManager->airportList), pA, compareByABC);
 	pManager->count++;
 	return 1;
 }
@@ -86,6 +86,60 @@ void	printAirports(const AirportManager* p)
 	printf("there are %d airports\n", p->count);
 	L_print(p->airportList, printAirport);
 	printf("\n");
+}
+int	saveToTextFile(AirportManager* pManager)
+{
+	int i;
+	Airport* airport;
+	NODE* temp = pManager->airportList;
+
+	FILE* f = fopen("airport_authority.txt", "w");
+	if (!f)
+		return 0 ;
+
+	fprintf(f, "%d\n", pManager->count);
+
+	for (i = 0; i < pManager->count; i++) {
+		airport = (Airport*)(temp->next->data);
+		fprintf(f, "%s\n", airport->name);
+		fprintf(f, "%s\n", airport->country);
+		fprintf(f, "%s\n", airport->code);
+		temp = temp->next;
+	}
+
+	fclose(f);
+	return 1;
+}
+
+int	readFromTextFile(AirportManager* pManager)
+{
+	Airport* airport;
+	FILE* f = fopen("airport_authority.txt", "r");
+	if (!f)
+		return 0;
+	pManager->airportList = L_init();
+	pManager->head = *pManager->airportList;
+	fscanf(f, "%d\n", &(pManager->count));
+
+	char tempName[MAX_STR_LEN];
+	char tempCountry[MAX_STR_LEN];
+	for (int i = 0; i < pManager->count; i++)
+	{
+		airport = (Airport*)malloc(sizeof(Airport));
+		if (!airport)
+			return 0;
+		fgets(tempName, MAX_STR_LEN, f);
+		tempName[strlen(tempName) - 1] = '\0';
+		airport->name = _strdup(tempName);
+		fgets(tempCountry, MAX_STR_LEN, f);
+		tempCountry[strlen(tempCountry) - 1] = '\0';
+		airport->country = _strdup(tempCountry);
+		fscanf(f, "%s\n", &airport->code);
+		L_insert(&pManager->airportList, airport, compareByABC);
+	}
+
+	fclose(f);
+	return 1;
 }
 
 void	freeManager(void* p)
