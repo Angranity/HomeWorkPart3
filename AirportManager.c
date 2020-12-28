@@ -40,7 +40,7 @@ int	addAirport(AirportManager* pManager)
 	if (!pA)
 		return 0;
 	setAirport(pA, pManager);
-	L_insert(&pManager->airportList, pA, isSameAirport);
+	L_insert(&pManager->airportList, pA, compareByABC);
 	pManager->count++;
 	return 1;
 }

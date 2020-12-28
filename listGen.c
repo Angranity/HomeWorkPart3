@@ -32,7 +32,7 @@ void L_insert(NODE** head, void* Value, int(*compare)(void*, void*))
 void L_insertSorted(NODE** head, NODE* newNode, int(*compare)(void*, void*))
 {
 	NODE* temp;
-	if (!(*head)->data || compare(newNode->data, (*head)->data))
+	if ((*head)->data == NULL || compare(newNode->data, (*head)->data) < 0)
 	{
 		newNode->next = (*head);
 		(*head) = newNode;
@@ -40,7 +40,7 @@ void L_insertSorted(NODE** head, NODE* newNode, int(*compare)(void*, void*))
 	else
 	{
 		temp = (*head);
-		while (temp->next && compare(newNode->data, temp->data) == 1)
+		while (temp->next != NULL && compare(newNode->data, temp->next->data) >= 0)
 		{
 			temp = temp->next;
 		}
@@ -52,7 +52,7 @@ void L_insertSorted(NODE** head, NODE* newNode, int(*compare)(void*, void*))
 void L_insertByDefault(NODE** head, NODE* newNode)
 {
 	NODE* temp;
-	if (!(*head))
+	if ((*head)->data == NULL)
 	{
 		newNode->next = (*head);
 		(*head) = newNode;
@@ -60,7 +60,7 @@ void L_insertByDefault(NODE** head, NODE* newNode)
 	else
 	{
 		temp = (*head);
-		while (temp->next)
+		while (temp->next!= NULL)
 		{
 			temp = temp->next;
 		}
@@ -107,7 +107,8 @@ void L_print(NODE* head, void(*print)(const void*))
 		return;
 
 	NODE* temp = head;
-	while (temp) {
+	while (temp) 
+	{
 		if (temp->data)
 			print(temp->data);
 		temp = temp->next;

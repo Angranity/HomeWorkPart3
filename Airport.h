@@ -10,6 +10,7 @@ typedef struct
 
 int		isSameAirport(const Airport* pPort1, const Airport* pPort2);
 int		isAirportCode(const Airport* pPort1, const char* code);
+int		compareByABC(const Airport* pPort1, const Airport* pPort2);
 void	initAirportNoCode(Airport* pPort);
 void	printAirport(const Airport* pPort);
 void	getAirportName(Airport* pPort);
