@@ -16,5 +16,5 @@ Airport* findAirportByCode(const AirportManager* pManager, const char* code);
 int		checkUniqeCode(const char* code, const AirportManager* pManager);
 void	printAirports(const AirportManager* p);
 void	freeManager(void* p);
-int 	saveToTextFile(AirportManager* pManager);
+void 	saveToTextFile(AirportManager* pManager);
 int 	readFromTextFile(AirportManager* pManager);

@@ -23,10 +23,11 @@ void L_insert(NODE** head, void* Value, int(*compare)(void*, void*))
 	if (!newNode)
 		return;
 	newNode->data = Value;
-
-	while (temp->next && compare(newNode->data, temp->next->data) >= 0)
-		temp = temp->next;
-
+	if (compare!=NULL)
+	{
+		while (temp->next && compare(newNode->data, temp->next->data) >= 0)
+			temp = temp->next;
+	}
 	newNode->next = temp->next;
 	temp->next = newNode;
 }

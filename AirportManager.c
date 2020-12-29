@@ -87,7 +87,7 @@ void	printAirports(const AirportManager* p)
 	L_print(p->airportList, printAirport);
 	printf("\n");
 }
-int	saveToTextFile(AirportManager* pManager)
+void	saveToTextFile(AirportManager* pManager)
 {
 	int i;
 	Airport* airport;
@@ -95,7 +95,7 @@ int	saveToTextFile(AirportManager* pManager)
 
 	FILE* f = fopen("airport_authority.txt", "w");
 	if (!f)
-		return 0 ;
+		return;
 
 	fprintf(f, "%d\n", pManager->count);
 
@@ -108,7 +108,6 @@ int	saveToTextFile(AirportManager* pManager)
 	}
 
 	fclose(f);
-	return 1;
 }
 
 int	readFromTextFile(AirportManager* pManager)
