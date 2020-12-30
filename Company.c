@@ -171,7 +171,12 @@ void	saveToBinaryFile(Company* pComp) {
 	fwrite(&(pComp->sortOption), sizeof(int), 1, f);
 
 	for (i = 0; i < pComp->flightCount; i++) {
-		fwrite(pComp->flightArr[i], sizeof(Flight), 1, f);
+		fwrite(pComp->flightArr[i]->originCode, sizeof(char), CODE_LENGTH + 1, f);
+		fwrite(pComp->flightArr[i]->destCode, sizeof(char), CODE_LENGTH + 1, f);
+		fwrite(&(pComp->flightArr[i]->hour), sizeof(int), 1, f);
+		fwrite(&pComp->flightArr[i]->date.day, sizeof(int), 1, f);
+		fwrite(&pComp->flightArr[i]->date.month, sizeof(int), 1, f);
+		fwrite(&pComp->flightArr[i]->date.year, sizeof(int), 1, f);
 	}
 
 	fclose(f);
@@ -203,7 +208,12 @@ int	readFromBinaryFile(Company* pComp) {
 		pComp->flightArr[i] = (Flight*)calloc(1, sizeof(Flight));
 		if (!pComp->flightArr[i])
 			return 0;
-		fread(pComp->flightArr[i], sizeof(Flight), 1, f);
+		fread(pComp->flightArr[i]->originCode, sizeof(char), CODE_LENGTH + 1, f);
+		fread(pComp->flightArr[i]->destCode, sizeof(char), CODE_LENGTH + 1, f);
+		fread(&(pComp->flightArr[i]->hour), sizeof(int), 1, f);
+		fread(&pComp->flightArr[i]->date.day, sizeof(int), 1, f);
+		fread(&pComp->flightArr[i]->date.month, sizeof(int), 1, f);
+		fread(&pComp->flightArr[i]->date.year, sizeof(int), 1, f);
 		functionDate(pComp, i);
 	}
 
