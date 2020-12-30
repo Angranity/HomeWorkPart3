@@ -93,7 +93,7 @@ void printCompany(const Company* pComp)
 {
 	printf("Company %s:\n", pComp->name);
 	printf("Has %d flights\n", pComp->flightCount);
-	generalArrayFunction(pComp->flightArr, pComp->flightCount, sizeof(*pComp->flightArr), printFlightArr);
+	printFlightArr(pComp->flightArr, pComp->flightCount);
 	printf("\nFlight Date List:\n");
 	L_print(pComp->dateList, printDateChar);
 }
@@ -131,16 +131,22 @@ void	printFlightsCount(const Company* pComp)
 
 void	printFlightArr(Flight** pFlight, int size)
 {
-	for (int i = 0; i < size; i++)
-		printFlight(pFlight[i]);
+	generalArrayFunction(pFlight, size, sizeof(*pFlight), printPtrFlight);
+}
+
+void printPtrFlight(const Flight** flight)
+{
+	printFlight(*flight);
 }
 
 void	freeFlightArr(Flight** arr, int size)
 {
-	for (int i = 0; i < size; i++)
-	{
-		freeFlight(arr[i]);
-	}
+	generalArrayFunction(arr, size, sizeof(*arr), freePtrFlight);
+}
+
+void freePtrFlight(Flight** flight) 
+{
+	freeFlight(*flight);
 }
 
 void	freeCompany(Company* pComp)
@@ -165,12 +171,7 @@ void	saveToBinaryFile(Company* pComp) {
 	fwrite(&(pComp->sortOption), sizeof(int), 1, f);
 
 	for (i = 0; i < pComp->flightCount; i++) {
-		fwrite(pComp->flightArr[i]->originCode, sizeof(char), CODE_LENGTH + 1, f);
-		fwrite(pComp->flightArr[i]->destCode, sizeof(char), CODE_LENGTH + 1, f);
-		fwrite(&(pComp->flightArr[i]->hour), sizeof(int), 1, f);
-		fwrite(&pComp->flightArr[i]->date.day, sizeof(int), 1, f);
-		fwrite(&pComp->flightArr[i]->date.month, sizeof(int), 1, f);
-		fwrite(&pComp->flightArr[i]->date.year, sizeof(int), 1, f);
+		fwrite(pComp->flightArr[i], sizeof(Flight), 1, f);
 	}
 
 	fclose(f);
@@ -197,13 +198,12 @@ int	readFromBinaryFile(Company* pComp) {
 
 	for (i = 0; i < pComp->flightCount; i++) {
 		pComp->flightArr = (Flight**)realloc(pComp->flightArr, (pComp->flightCount + 1) * sizeof(Flight*));
+		if (!pComp->flightArr)
+			return 0;
 		pComp->flightArr[i] = (Flight*)calloc(1, sizeof(Flight));
-		fread(pComp->flightArr[i]->originCode, sizeof(char), CODE_LENGTH + 1, f);
-		fread(pComp->flightArr[i]->destCode, sizeof(char), CODE_LENGTH + 1, f);
-		fread(&(pComp->flightArr[i]->hour), sizeof(int), 1, f);
-		fread(&pComp->flightArr[i]->date.day, sizeof(int), 1, f);
-		fread(&pComp->flightArr[i]->date.month, sizeof(int), 1, f);
-		fread(&pComp->flightArr[i]->date.year, sizeof(int), 1, f);
+		if (!pComp->flightArr[i])
+			return 0;
+		fread(pComp->flightArr[i], sizeof(Flight), 1, f);
 		functionDate(pComp, i);
 	}
 

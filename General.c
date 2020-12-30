@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
 #include "General.h"
 
 
@@ -70,10 +69,8 @@ char**	splitCharsToWords(char* str, int* pCount, int* pTotalLength)
 	*pCount = count;
 	return wordsArray;
 }
-void generalArrayFunction(const void* arr, int size, int typeSize, void(*function)(const void*))
+void generalArrayFunction(void* arr, int size, int typeSize, void f(void* element))
 {
 	for (int i = 0; i < size; i++)
-	{
-		function((char*)arr + i * typeSize);
-	}
+		f((char*)arr + (i * typeSize));
 }
