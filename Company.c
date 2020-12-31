@@ -144,7 +144,7 @@ void	freeFlightArr(Flight** arr, int size)
 	generalArrayFunction(arr, size, sizeof(*arr), freePtrFlight);
 }
 
-void freePtrFlight(Flight** flight) 
+void freePtrFlight(Flight** flight)
 {
 	freeFlight(*flight);
 }
@@ -157,25 +157,30 @@ void	freeCompany(Company* pComp)
 	L_free(&pComp->head, NULL);
 }
 
-void	saveToBinaryFile(Company* pComp) {
+int	saveToBinaryFile(Company* pComp) {
 	int i;
 	size_t nameLength;
 	FILE* f = fopen("company.bin", "wb");
 	if (!f)
-		return;
+		return 0;
 
 	nameLength = strlen(pComp->name) + 1;
-	fwrite(&nameLength, sizeof(int), 1, f);
-	fwrite(pComp->name, sizeof(char), nameLength, f);
-	fwrite(&(pComp->flightCount), sizeof(int), 1, f);
-	fwrite(&(pComp->sortOption), sizeof(int), 1, f);
+	if (fwrite(&nameLength, sizeof(int), 1, f) != 1)
+		return 0;
+	if (fwrite(pComp->name, sizeof(char), nameLength, f) != nameLength)
+		return 0;
+	if (fwrite(&(pComp->flightCount), sizeof(int), 1, f) != 1)
+		return 0;
+	if (fwrite(&(pComp->sortOption), sizeof(int), 1, f) != 1)
+		return 0;
 
 	for (i = 0; i < pComp->flightCount; i++) {
-		fwrite(pComp->flightArr[i], sizeof(Flight), 1, f);
-
+		if (fwrite(pComp->flightArr[i], sizeof(Flight), 1, f) != 1)
+			return 0;
 	}
 
 	fclose(f);
+	return 1;
 }
 
 int	readFromBinaryFile(Company* pComp) {
@@ -184,15 +189,19 @@ int	readFromBinaryFile(Company* pComp) {
 	if (!f)
 		return 0;
 
-	fread(&nameLength, sizeof(int), 1, f);
+	if (fread(&nameLength, sizeof(int), 1, f) != 1)
+		return 0;
 	pComp->name = (char*)malloc(nameLength * sizeof(char));
 	if (!pComp->name)
 		return 0;
-	fread(pComp->name, sizeof(char), nameLength, f);
+	if (fread(pComp->name, sizeof(char), nameLength, f) != nameLength)
+		return 0;
 
-	fread(&(pComp->flightCount), sizeof(int), 1, f);
+	if (fread(&(pComp->flightCount), sizeof(int), 1, f) != 1)
+		return 0;
 
-	fread(&(pComp->sortOption), sizeof(int), 1, f);
+	if (fread(&(pComp->sortOption), sizeof(int), 1, f) != 1)
+		return 0;
 	pComp->flightArr = NULL;
 	pComp->dateList = L_init();
 	pComp->head = *pComp->dateList;
@@ -204,7 +213,8 @@ int	readFromBinaryFile(Company* pComp) {
 		pComp->flightArr[i] = (Flight*)calloc(1, sizeof(Flight));
 		if (!pComp->flightArr[i])
 			return 0;
-		fread(pComp->flightArr[i], sizeof(Flight), 1, f);
+		if (fread(pComp->flightArr[i], sizeof(Flight), 1, f) != 1)
+			return 0;
 		functionDate(pComp, i);
 	}
 

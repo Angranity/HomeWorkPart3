@@ -23,7 +23,7 @@ void	printFlightsCount(const Company* pComp);
 void	printFlightArr(Flight** pFlight, int size);
 void	freeFlightArr(Flight** arr, int size);
 void	freeCompany(Company* pComp);
-void	saveToBinaryFile(Company* pComp);
+int		saveToBinaryFile(Company* pComp);
 int		readFromBinaryFile(Company* pComp);
 void	freePtrFlight(Flight** flight);
 void	printPtrFlight(const Flight** flight);
