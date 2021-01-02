@@ -166,17 +166,33 @@ int	saveToBinaryFile(Company* pComp) {
 
 	nameLength = strlen(pComp->name) + 1;
 	if (fwrite(&nameLength, sizeof(int), 1, f) != 1)
+	{
+		fclose(f);
 		return 0;
+	}
 	if (fwrite(pComp->name, sizeof(char), nameLength, f) != nameLength)
+	{
+		fclose(f);
 		return 0;
+	}
 	if (fwrite(&(pComp->flightCount), sizeof(int), 1, f) != 1)
+	{
+		fclose(f);
 		return 0;
+	}
 	if (fwrite(&(pComp->sortOption), sizeof(int), 1, f) != 1)
+	{
+		fclose(f);
 		return 0;
+	}
 
-	for (i = 0; i < pComp->flightCount; i++) {
+	for (i = 0; i < pComp->flightCount; i++)
+	{
 		if (fwrite(pComp->flightArr[i], sizeof(Flight), 1, f) != 1)
+		{
+			fclose(f);
 			return 0;
+		}
 	}
 
 	fclose(f);
@@ -190,18 +206,33 @@ int	readFromBinaryFile(Company* pComp) {
 		return 0;
 
 	if (fread(&nameLength, sizeof(int), 1, f) != 1)
+	{
+		fclose(f);
 		return 0;
+	}
 	pComp->name = (char*)malloc(nameLength * sizeof(char));
 	if (!pComp->name)
+	{
+		fclose(f);
 		return 0;
+	}
 	if (fread(pComp->name, sizeof(char), nameLength, f) != nameLength)
+	{
+		fclose(f);
 		return 0;
+	}
 
 	if (fread(&(pComp->flightCount), sizeof(int), 1, f) != 1)
+	{
+		fclose(f);
 		return 0;
+	}
 
 	if (fread(&(pComp->sortOption), sizeof(int), 1, f) != 1)
+	{
+		fclose(f);
 		return 0;
+	}
 	pComp->flightArr = NULL;
 	pComp->dateList = L_init();
 	pComp->head = *pComp->dateList;
@@ -209,12 +240,21 @@ int	readFromBinaryFile(Company* pComp) {
 	for (i = 0; i < pComp->flightCount; i++) {
 		pComp->flightArr = (Flight**)realloc(pComp->flightArr, (pComp->flightCount + 1) * sizeof(Flight*));
 		if (!pComp->flightArr)
+		{
+			fclose(f);
 			return 0;
+		}
 		pComp->flightArr[i] = (Flight*)calloc(1, sizeof(Flight));
 		if (!pComp->flightArr[i])
+		{
+			fclose(f);
 			return 0;
+		}
 		if (fread(pComp->flightArr[i], sizeof(Flight), 1, f) != 1)
+		{
+			fclose(f);
 			return 0;
+		}
 		functionDate(pComp, i);
 	}
 

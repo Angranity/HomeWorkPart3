@@ -126,7 +126,11 @@ int	readFromTextFile(AirportManager* pManager)
 	{
 		airport = (Airport*)malloc(sizeof(Airport));
 		if (!airport)
+		{
+			fclose(f);
 			return 0;
+		}
+
 		fgets(tempName, MAX_STR_LEN, f);
 		tempName[strlen(tempName) - 1] = '\0';
 		airport->name = _strdup(tempName);
