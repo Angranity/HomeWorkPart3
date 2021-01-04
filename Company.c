@@ -313,13 +313,14 @@ int		compareByDate(const void* e1, const void* e2)
 {
 	const Flight* flight1 = *(const Flight**)e1;
 	const Flight* flight2 = *(const Flight**)e2;
-
-	if (flight1->date.day == flight2->date.day && flight1->date.month == flight2->date.month && flight1->date.year == flight2->date.year)
-		return 0;
-	else if (flight1->date.year > flight2->date.year || flight1->date.year == flight2->date.year && flight1->date.month > flight2->date.month ||
-		flight1->date.year == flight2->date.year && flight1->date.month == flight2->date.month && flight1->date.day > flight2->date.day)
-		return 1;
-	else return -1;
+	
+	if (flight1->date.year != flight2->date.year)
+		return flight1->date.year - flight2->date.year;
+	else if (flight1->date.month != flight2->date.month)
+		return flight1->date.month - flight2->date.month;
+	else if (flight1->date.day != flight2->date.day)
+		return flight1->date.day - flight2->date.day;
+	return 0;
 }
 int		compareByOriginCode(const void* e1, const void* e2)
 {
