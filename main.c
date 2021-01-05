@@ -28,9 +28,10 @@ int main()
 	{
 		printf("Error open airport manager file\n");
 		initManager(&manager);
+		initCompany(&company);
 	}
 
-	if (!readFromBinaryFile(&company))
+	else if (!readFromBinaryFile(&company))
 	{
 		printf("Error open company file\n");
 		initCompany(&company);

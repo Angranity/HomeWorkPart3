@@ -138,7 +138,7 @@ int	readFromTextFile(AirportManager* pManager)
 		tempCountry[strlen(tempCountry) - 1] = '\0';
 		airport->country = _strdup(tempCountry);
 		fscanf(f, "%s\n", &airport->code);
-		L_insert(&pManager->airportList, airport, compareByABC);
+		L_insert(&pManager->airportList, airport, compareByABC); // Can be written instead of compareABC, NULL
 	}
 
 	fclose(f);
